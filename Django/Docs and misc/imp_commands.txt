@@ -1,0 +1,106 @@
+1) To run server in specific port:
+python manage.py runserver 4000
+
+2) Function based view
+from django.http import HttpResponse
+def my_func(request):
+    return HttpResponse('Hello World!')
+Now go to urls.py of main project:
+from app1 import views
+path('api/',views.my_func,name='my_func') # by default same name as view func
+
+3) To remove funcion based views name conflict of multiple apps in urls:
+in urls.py:
+M1: using aliasing
+    from myapp1 import views
+    from myapp2 import views
+It will take last one. To manage name conflict use aliasing.
+    from myapp1 import views as v1
+    from myapp2 import views as v2
+
+M2: Using selective imports as:
+    from myapp1.views import my_func, home
+    from myapp2.views import f2
+    path('api/', my_func, name='my_func') # no views.my_func needed
+
+4) To give same response from multiple urls:
+path('api/',my_func),
+path('a/',my_func)
+
+5) Url path: path('api/', view, kwargs, name) #kwargs and name are optional
+
+use of kwargs: To send values from urls.py kwargs to views.py as:
+
+urls.py:
+    path('a/', views.my_func, {'status':'OK'} ,name='my_func'),
+app1/views.py:
+    def my_func(request, **kwargs):
+    status = kwargs.get('status', 'if_ab_then_this_default_val_will_be_shown)
+    return HttpResponse(f'Hello World! The status is {status}')
+key: dict: mp.get(key_val, default_val_to_return_if_key_is_absent)
+
+6) To write urls.py inside app1 then map to main project's urls.py:
+api/urls.py:
+from django.urls import path
+from .views import my_func
+urlpatterns = [
+    path('a/', my_func, {'status':'OK'} ,name='my_func'),
+]
+outer project/urls.py:
+from django.urls import path, include
+path('inner/', include('api.urls')),
+ so urls will be: inner/a
+
+7) Templates for UI:
+M1: creating templates inside app1:
+
+inside app1: create templates/app1/django.html
+views.py:
+# render combines result of given html and variables from the dictionary 
+and gives back in text form which is then returned by return that is why
+return render.
+
+from djnago.shortcuts import render
+def my_func(request):
+    return render(request, template_name, context=dict_name, content_type=MIME_type, status= None, 
+    using= None)
+eg:
+def my_func(req):
+    return render(req, 'api/django.html')
+
+M2:
+
+8) Render Dynamic template
+key: double {{}} inside djnago.html
+views.py:
+def my_func(request):
+    my_var = {'my_key': 12}
+    return render(request, 'api/django.html', context=my_var)
+
+djnago.html:
+<body>
+    <h1>Page num {{my_key}}</h1>
+</body>
+
+9) Comment in DTL:
+{% comment %} hello this is comment in DTL {% endcomment %}
+
+10) How to use static files; css, js, images
+No modifications in settings.py needed if we are creating inside our app1
+app1/static/app1/css/style.css
+in djnago.html chnages to be made as:
+below !doctype write: {% load static %}
+include css as above <title> </title>: 
+<link rel="stylesheet" href="{% static 'api/css/style.css' %}">
+
+similarly make folder of js , images etc
+in djnago.html inculde js above body tage as:
+<scripts src="{% static 'api/js/test.js' %}"></scripts>
+for images: make img folder and do inside django.html as:
+<img src="{% static 'api/img/pic1.png' %}" alt="" >
+
+11) html section like navbar.html let us name it as base.html which stays
+constant across all pages, so how do we extend it?
+extends is used. you can refer its syntax.
+
+12)
