@@ -103,4 +103,181 @@ for images: make img folder and do inside django.html as:
 constant across all pages, so how do we extend it?
 extends is used. you can refer its syntax.
 
-12)
+12) Model and create database 
+models.py:
+from djnago.db imports models
+class Profile(models.Model): #Profile will be table name in db with little tweak
+    name=models.CharField(max_length=70) # CharField is data type;
+# similarly many datatype like for integer, images etc are there in django.
+the table name in db is: app1_profile
+after this: python manage.py makemigrations: this is used to detect what
+chnages we have done in our models.py
+
+to see the corresponding sql command used: assuming migration file is:
+0001_initial.py:
+python manage.py sqlmigrate app1 0001
+
+to finally make table in db: python manage.py migrate
+
+You made table now you added a new column so you must provide some default
+values for the earlier created rows. How to do it as:
+M1: select 1 in terminal; type anything like 'bksc'
+M2: via code change in models.py as:
+    comment = models.CharField(max_length=70, default='my_default_text')
+
+13) To show data from the db:
+ModelClassName.objects.all() -> returns the query set which contains all the 
+object of this ModelClassName, that is all rows from table.
+
+views.py:
+from api.models import Profile # Profile is class name in models.py
+def my_func(req):
+    stu = Profile.objects.all()
+    # to get a single object/row from table:
+    v = Profile.objects.get(surname='Kumar')
+    print(v.comment)
+
+14) To create superuser: python manage.py createsuperuser
+
+15) To register our model in admi panel:
+admin.py:
+from api.models import Profile
+admin.site.register(Profile)
+
+To make the row data human redable:
+in models.py: 
+class Profile(models.Model):
+    name=models.CharField(max_length=70)
+    comment=models.CharField(max_length=70)
+    surname=models.CharField(max_length=40,default='Raj')
+    def __str__(self):
+        return self.name # this you need to add.
+        # or if you want id then must typecast it to string as id is int
+        # return str(self.id)
+
+# To see db in table form custiomized to our need:
+admin.py:
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('name','comment')
+admin.site.register(Profile,ProfileAdmin)
+
+advantage: to see data we will not be needing 3rd party editor like sq lite 
+
+another way to do same but using decorate as:
+@admin.site.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('name','comment')
+
+16) To create form, there are two methods:
+M1: via form api
+M2: via model form
+
+M1: via form api:
+create app1/forms.py:
+from django import forms
+class Registration(forms.Form):
+    first_name = forms.CharField(max_length=30) # underscore chnage to space
+    email = forms.EmailField()
+views.py:
+from app1.forms import Registration
+def reg(req):
+    fm = Registration()
+    mp = {'form':fm}
+    return render(req, app1/django.html,mp)
+
+17) To hide the password so it looks like dot dot:
+in models.py:
+class Profile:
+    pwd = forms.CharField(widget=forms.PasswordInput())
+# similarly: widget=forms.HiddenInput() is also there
+
+18) Use get in frontend whe you want to send data which is small or which
+cannot manipulate our backend . like search feature.
+use post: when you want to send a data that can manipulate backend.
+like: password, token etc. If we use post method then we get protection
+from csrf in django.
+
+19) To send data via POST from frontend form in template/app1/django.html)
+to backend:
+method=post in frontend and after filling values you submit, you get 
+csrf verification failed error. How to solve that as:
+in djnago.html in you post form write:
+{% csrf_token %} below form tag
+
+Now after filling form, how to get this data in backend: (data from f to b)
+
+views.py:
+from app1.forms import Registration
+def register(request):
+    if request.method=='POST':
+        f = Registration(request.POST)
+        if f.is_valid():
+            print(f.cleaned_data)
+    else:
+        f = Registration()
+    return render(request,'api/django.html',{'form':f})
+
+To remove multiple form submission on refreshing the page:
+The best option is to redirect to success.html page as:
+make success.html inside api/templates
+views.py:
+from django.http import HttpResponseRedirect
+def register(request):
+    if request.method=='POST':
+        f = Registration(request.POST)
+        if f.is_valid():
+            print(f.cleaned_data)
+            return HttpResponseRedirect('/d') #newly added; also /d is imp;
+    else:
+        f = Registration()
+    return render(request,'api/django.html',{'form':f})
+
+def registration_success(request):
+    return render(request, 'api/success.html')
+
+api/urls.py:
+path('d/', registration_success)
+
+20) To write our own validation inside forms.py:
+class Registration(forms.Form):
+    name=forms.CharField()
+    def clean_name(self):
+        name_value=self.cleaned_data['name']
+        if len(name_value)<4:
+            raise forms.ValidationError('Enter more than 4 character')
+        return name_value
+
+21) To save frontend data of form in db:
+as per the parameters of forms.py make models.py params as:
+class User(models.Model):
+    name=models.CharField(max_length=255)
+    email=models.EmailField(max_length=255)
+# note: name,email was also in forms.py so be consisitent
+
+views.py:
+from api.models import User
+def register(request):
+    if request.method=='POST':
+        f = Registration(request.POST)
+        if f.is_valid():
+            #print(f.cleaned_data)
+            nm = f.cleaned_data['name']
+            em = f.cleaned_data['email']
+            u = User(name=nm, email=em)
+            u.save()
+            return HttpResponseRedirect('/d')
+# to delete:
+u = User(id=2)
+u.delete()
+ 
+To save , update, delete we will prefer Model form as in 22
+
+22) Model form ; M2 of 16
+forms.py:
+from app1.models import User
+class Registration(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['name','email']
+
+23)
