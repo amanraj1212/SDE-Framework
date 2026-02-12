@@ -280,4 +280,19 @@ class Registration(forms.ModelForm):
         model=User
         fields=['name','email']
 
-23)
+23) dynamic url like: api/1; api/2 etc;
+urls.py:
+from api.views import profile
+path('profile/<my_id>', profile, name='profile')
+more data type to write:
+path('profile/<int:my_id>', profile, name='profile')
+path('profile/<slug:title>', profile, name='profile')
+path('profile/<str:title>', profile, name='profile')
+like: api/django-like-me
+
+api/views.py:
+def profile(request,my_id):
+    stu = {'id':my_id}
+    return render(request, 'api/profile.html', stu)
+
+24)
