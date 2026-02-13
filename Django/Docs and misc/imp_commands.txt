@@ -295,4 +295,160 @@ def profile(request,my_id):
     stu = {'id':my_id}
     return render(request, 'api/profile.html', stu)
 
-24)
+24) lect 51 of django new playlist will teach complete authentication
+
+25) Cookie is a piece of text data sent by server to the client. It is
+a way to remember the user preference and is sent automatically in 
+the http header when client makes request. We can set its age in seconds
+after which it expires whether you close the browser or not. Many cookies
+are built that once you close the browser it is deleted but many are set
+for some short time like 2min and even if you do not close the browser it 
+gets deleted. 
+practical:
+make setcookie.html, getcookie.html and delcookie.html;
+
+to see cookie. open browser after starting the server and hit home page. 
+right click and inpect. go to >> and storage. there you will see cookie.
+another way to see cookie is to open settings from browser tab and go
+to privacy and cokkie and see from there.
+
+mostly session based framework is used over cookies now
+
+views.py:
+from datetime import datetime,timedelta
+# server se client mai set kar rhe
+def setcookie(request):
+    response = render(request, 'api/setcookie.html')
+    response.set_cookie('cookie_iss_naam_se_jana_jayega', 'cookie_key_val_123', max_age=5)
+    return response
+
+# client se server mai kaise get karenge
+def getcookie(request):
+    response = render(request, 'api/getcookie.html')
+    #get_cookie_from_client = request.COOKIES['cookie_iss_naam_se_jana_jayega']
+    # when you want to see some deault value when cookie is delete then:
+    get_cookie_from_client = request.COOKIES.get('cookie_iss_naam_se_jana_jayega','default123')
+    print(get_cookie_from_client)
+    return response
+
+def delcookie(request):
+    response = render(request, 'api/delcookie.html')
+    response.delete_cookie('cookie_iss_naam_se_jana_jayega')
+    return response
+
+urls.py:
+path('set/', setcookie),
+    path('get',getcookie),
+    path('del',delcookie),
+
+26) Session | Database session
+in my sheet notes it is well written.
+
+27) diff between caching and cookie:
+Caching improves performance by storing frequently accessed data temporarily, 
+while cookies store user-specific data in the browser for state management 
+and authentication.
+
+3 ways to cache:
+either per site caching(cache the whole website), per view caching(cache by view)
+or cache template by fragment;
+you can store cache in 3 ways:
+either store cache in db, or store in your own mainted file sys, or 
+store in local memory or use redis if project is large.
+lec: [58 to 61]
+
+28) Signals: maps events(from sender side like login) to actions(save/delete)
+A signal lets you automatically run some code when a specific event happens.
+eg:
+A user registers on your website.
+Automatically:
+    A welcome email is sent
+    A profile object is created
+    A log entry is stored
+Instead of writing all this inside your views.py, we use signals.
+
+29) middleware acts like a filter or checkpoint.
+Middleware is a layer that sits between the request and the view, and 
+between the view and the response.
+It processes requests before they reach the view and processes responses 
+before they are sent back to the client.
+Why Middleware is Used
+Authentication checking,Logging requests,Modifying response headers,
+Rate limiting,CORS handling,Security checks
+When request comes:
+Middleware executes (top to bottom),View runs,
+Middleware executes again (bottom to top).It works like a stack.
+
+30) [74, 77] --> model relationship like one to one; many to one;
+many to many ; on delete cascade etc;
+
+31) wsgi vs asgi
+wsgi: web server gateway interface; used to make synchronous application; 
+if one req takes 10s and other 5s then total time taken to process both
+request is 15s but in asgi: asynchronous server gateway interface; if
+one req take 10s and other 5s the both request will end in 15s;
+asgi is used when we want to make real time chat applications;
+it supports both http and sockets;wsgi only supports http protocol;
+wsgi used to make traditional web application;in djnago channel and django celery
+we can use asgi; even if we do not use asgi it will work but if we want to
+extract all the features then asgi will be good. note asgi also comes with
+code complexity so decide which to use as per use case.
+
+asynchronous views as:
+async def home(request):
+    pass
+note if you are using async then wsgi will not support it hence install
+unicorn lib as it will support both. 
+async is useful when we want to call external apis.
+
+32) class based view:
+here code looks organised; we get in built get,post etc here;
+views.py:
+from djnago.views import View
+class MyClassView1(View):
+    def get(self,request): #get request
+        return HttpResponse("Hello from class based View")
+# to return render the .html as:
+class MyClassView1(View):
+    def get(self,request): #get request
+        return render(request, 'myapp/home.html')
+    # for post request
+    def post(self,request):
+        pass
+
+urls.py:
+path('e/',MyClassView1.as_view(),name="myclassview1"),
+
+33) Syntax of method decorator in class based view
+from djnago.contrib.auth.decorators import login_required
+class SellerDistributionView(View):
+    @method_decorator(login_required):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'seller/dashboard.html')
+or another way is to keep the decorator above the class so it will be applied
+to all the request inside the class like get,post etc.
+@method_decorator(login_required,name='dispatch')
+
+34) JSONResponse ; subclass of HttpResponse
+views.py:
+from djnago.http import JsonResponse
+def my_func(request):
+    data = {'hello':'kaise ho', 'status':'success hai bhai'}
+    return JsonResponse(data)
+
+# to return json response from db models:
+views.py:
+from api.models import Product
+from djnago.core.serializers import serialize
+def home_view(request):
+    p = serialize('json',Product.objects.all())
+    return JsonResponse(p,safe=False)
+
+35) django silk is used for profiling that is measure the performance 
+of the system working live in production. helpful in optimisation and 
+all.
+
+36) .env file to secure password and secret ley; implemented by installing
+python-decouple lib. lec 120.
+
+37)
