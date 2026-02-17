@@ -1,0 +1,286 @@
+1) make sure to include: rest_framework in the installed apps of settings.py
+
+2) Serialization:
+converting complex data into JSON format.
+model instance to JSON -> Serialization
+frontend data (in JSON) to model instance(object) -> deserialization
+
+serializer:
+a tool in drf that:
+-> converts complex data such as querysets into native python dataTypes.
+-> converts model to json for response
+-> converts json to for saving in db
+-> validates incoming data and do not let invalidated data to gets saved in db
+
+3) python has a built-in package c/a json which is used to work with json data.
+convert python objects to json: use dumps
+import json
+python_obj = {'name':'Aman','roll':2}
+json_data = json.dumps(python_obj)
+print(json_data)
+op: {"name":"Aman","roll":2}
+
+for converting json data back to python obj use loads as:
+parsed_data = json.loads(json_data)
+
+trick: jpl: json to python use loads;
+       pjd: python obj to jspn use dumps 
+
+4) a serializer is very similar to django form and modelform class.
+How to create serializer class:
+create separate serializers.py to write all serializers
+similar to forms.py
+from rest_framework import serializers
+class Model_nameSerializer(serializers.Serializer): #eg: StudentSerializer
+    name=serializers.CharField(max_length=100)
+    roll = serializers.IntegerField()
+
+5) complex data type(serialization)->python nativate datatype(render into json)
+-> json data
+
+serialization process: complex datay type to native python data type
+stu = Student.object.get(id=1)
+# convert model instance stu into python dict/serializing object
+serializer = StudentSerializer(stu)
+
+stu = Student.object.all()
+serializer = StudentSerializer(stu, many=True)
+print(serializer.data)
+
+JSONRenderer: This is used to render Serialized data into JSON which is 
+understandable by FrontEnd
+
+from rest_framework.renderers import JSONRenderer
+# render the data into JSON
+json_data = JSONRenderer().render(serializer.data)
+
+6) JSONResponse(data,safe=True)
+An HttpResponse subclass that helps to create a JSON-encoded response.
+data must be dict; 
+if safe = False then data can be any python serialized object.
+
+7) Model object: one row; single student data from db;
+   Queryset: multiple rows;
+
+8) Send data from db to frontend in json format via code in backend.
+models.py: make it;
+serializers.py:
+from rest_framework import serializers
+class StudentSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    roll = serializers.IntegerField()
+    city = serializers.CharField(max_length=100)
+
+views.py:
+from django.shortcuts import render
+from .models import Student
+from .serializers import StudentSerializer
+from rest_framework.renderers import JSONRenderer
+from django.http import HttpResponse
+# Create your views here.
+
+def student_detail(request):
+    stu = Student.objects.get(id=1)
+    serializer = StudentSerializer(stu)
+    json_data = JSONRenderer().render(serializer.data)
+    return HttpResponse(json_data, content_type='application/json')
+
+instead of witing these two line:
+json_data = JSONRenderer().render(serializer.data)
+    return HttpResponse(json_data, content_type='application/json')
+i can write return JsonResponse(serializer.data)
+make sure to import as:
+from django.http import JsonResponse
+
+9) let us craete a 3rd party applications which want to fetch data of our 
+above api. this 3rd party application code can be in python, java, etc.
+here i have used python as 3rd party application.
+
+my_file.py:
+import requests
+URL = "http://127.0.0.1:8000/a"
+r = requests.get(url = URL)
+data = r.json()
+print(data)
+
+10) Now let us study deserialisation and insert data from frontend to backend
+(db):
+json data(->parsed data) -> python native datatype(->deserialisation)->
+complex datatype
+
+import io
+stream = io.BytesIO(json_data)
+
+JSONParser(): parse python data to python native data type
+from rest_framework.parsers import JSONParser
+parsed_data = JSONParser().parse(stream)
+
+deserialization: convert parsed data to complex data type
+# create serializer object:
+serializer = StudentSerializer(data = parsed_data)
+# validate data
+serializer.is_valid()
+if valid then: serializer.validated_data
+else serializer.errors
+
+coding above(i.e, creating data in the db sent by frontend(here:my_file.py)):
+serializers.py
+class StudentSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    roll = serializers.IntegerField()
+    city = serializers.CharField(max_length=100)
+    def create(self, validate_data):
+        return Student.objects.create(**validate_data)
+
+views.py
+import io
+from rest_framework.parsers import JSONParser
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def student_create(request):
+    if request.method =='POST':
+        json_data = request.body
+        # conversion of json_data from frontend to complex data type in python
+        stream = io.BytesIO(json_data)
+        pythondata = JSONParser().parse(stream)
+        serializer = StudentSerializer(data=pythondata)
+        if serializer.is_valid():
+            serializer.save()
+            res = {'msg':'data create ho gaya hai'}
+            json_data = JSONRenderer().render(res)
+            return HttpResponse(json_data, content_type='application/json')
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json')
+
+frontend code from client from where he sends data:(here, my_file.py)
+import requests
+import json
+URL = "http://127.0.0.1:8000/b/"
+data = {'name':'Srijan', 'roll':103, 'city':'Begusarai'}
+json_data = json.dumps(data)
+r = requests.post(url = URL, data=json_data)
+data = r.json()
+print(data)
+
+11) update data: full update(put) and partial update(patch)
+serializers.py:
+class StudentSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    roll = serializers.IntegerField()
+    city = serializers.CharField(max_length=100)
+    def update(self,instance,validated_data):
+        #instance: new data from user
+        #validated_data: old data stored in database
+        instance.name=validated_data.get('name',instance.name)
+        instance.roll=validated_data.get('roll',instance.roll)
+        instance.city=validated_data.get('city',instance.city)
+        instance.save()
+        return instance
+# for full update and parial update diff in serializers.py only;
+for full update same as in above points but for partial update:
+serializer=StudentSerializer(stu,data=pythondata,partial=True)
+if serializer.is_valid:
+    serializer.save()
+
+for DELETE there is no need of serializer.
+views.py code of PUT(partial=True se partial update ho as:)
+if request.method=='PUT':
+    json_data=request.body
+    stream=io.BytesIO(json_data)
+    pythondata=JSONParser().parse(stream)
+    id=pythondata.get('id')
+    stu=Student.objects.get(id=id)
+    serializer=StudentSerializer(stu,data=pythondata,partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        res = {'msg':'Data updated'}
+        json_data = JSONRenderer().render(res)
+        return HttpResponse(json_data,content_type='application/json')
+    json_data = JSONRenderer().render(serializer.errors)
+    return HttpResponse(json_data,content_type='application/json')
+
+code for delete:
+if request.method=='DELETE':
+    json_data=request.body
+    stream=io.BytesIO(json_data)
+    pythondata=JSONParser().parse(stream)
+    id=pythondata.get('id')
+    stu=Student.objects.get(id=id)
+    stu.delete()
+    res={'msg':'deleted'}
+    json_data=JSONRenderer().render(res)
+    return HttpResponse(json_data,content_type='application/json')
+
+12) class based view in drf;
+everything serializers.py, models.py will remain same. only views.py 
+will change as:
+# importing csrf exempt is done differently in class based views as:
+from django.utils.decorators import method decorator
+from django.views import View
+@method_decorator(csrf_exempt,name='dispatch')
+class StudentAPI(View):
+    def get(self,request,*args,**kwargs):
+        // copy all code from get of above func based
+    def post('same as above')
+
+13) Field level validation
+class StudentSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    roll = serializers.IntegerField()
+    city = serializers.CharField(max_length=100)
+    #this method is automatically invoked when is_valid() method is called
+    def validate_roll(self,value):
+        if value>=200:
+            raise serializers.ValidationError('seat full')
+        return value
+
+14) using model serializer in drf we now do not have to write 
+def create(), def validate() etc:
+serializers.py:
+class StudentSerializer(srializers.ModelSerializer):
+    '''
+    # no need to write
+    name=serializers.CharField(max_length=100)
+    roll=serializers.IntegerField()
+    city=serializers.CharField(max_length=100)
+    def create()
+    def validate()
+    '''
+    class Meta:
+        model=Student
+        fields=['name','roll','city']
+
+15) in views.py of above we are not using the features of drf that is why
+we are writing a lot of code. let us study function based api view and class
+based api view in drf.
+
+Function based api_view
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+@api_view(['GET']) # by default it is GET if vacant
+def student_list(request):
+    if request.method=='GET':
+        stu = Student.objects.all()
+        serializer = StudentSerializer(stu, many=True)
+        return response(serializer.data)
+
+from rest_framework.response import Response
+@api_view()
+def hello_world(request):
+    return Response({'msg':'Hello World'})
+# see how easy to create api now. no conversion steps needed.
+
+we get browsable api via drf useful for api testing.
+
+similarly class based api view also exists.
+from rest_framework.decorators import APIView
+class StudentAPI(APIView):
+    def get(self,request,format=None):
+        stu=Student.objects.all()
+        serializer=StudentSerializer(stu, many=True)
+        return Response(serializer.data)
+    def post(self,request,format=None):
+        pass
+
+16)
