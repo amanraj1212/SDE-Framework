@@ -283,4 +283,225 @@ class StudentAPI(APIView):
     def post(self,request,format=None):
         pass
 
-16)
+16) Authentication: identify you. username; pwd;
+    Authorization: post auth what you are allowed to do.
+Some of the Authentication provided by DRF are as follows:
+Basic authentication; session authentication; token authentication etc.
+
+17) Basic authentication and permisiion class in function based view
+for my below api , currently anyone can put, patch, delete. no authentication
+is there.
+note for class based view only syntax is diff. 
+authentication_classes=[BasicAuthentication] and import like:
+from rest_framework.authentication import BasicAuthentication
+below i have used function based view.
+
+serializers.py:
+from rest_framework import serializers
+from .models import Student
+
+class StudentSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(max_length=100)
+    roll = serializers.IntegerField()
+    city = serializers.CharField(max_length=100)
+
+    # CREATE → used in POST
+    def create(self, validated_data):
+        return Student.objects.create(**validated_data)
+
+    # UPDATE → used in PUT / PATCH
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.roll = validated_data.get('roll', instance.roll)
+        instance.city = validated_data.get('city', instance.city)
+        instance.save()
+        return instance
+views.py
+
+@api_view(['GET'])
+def student_detail(request):
+    stu = Student.objects.all()
+    serializer = StudentSerializer(stu, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def student_create(request):
+    serializer = StudentSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'msg': 'data create ho gaya hai'}, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT', 'PATCH', 'DELETE'])
+def student_update(request, pk):
+
+    try:
+        student = Student.objects.get(pk=pk)
+    except Student.DoesNotExist:
+        return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # PUT → Full Update
+    if request.method == 'PUT':
+        serializer = StudentSerializer(student, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # PATCH → Partial Update
+    elif request.method == 'PATCH':
+        serializer = StudentSerializer(student, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # DELETE → Delete Student
+    elif request.method == 'DELETE':
+        student.delete()
+        return Response({'msg': 'Student deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+urls.py:
+from django.contrib import admin
+from django.urls import path
+from api.views import student_detail, student_create, student_update
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('a/', student_detail),            # GET all
+    path('b/', student_create),            # POST
+    path('c/<int:pk>/', student_update),   # PUT / PATCH / DELETE
+]
+
+Now after applying authentication, it will ask for username and pwd 
+for every reqeuest.
+views.py:
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+@api_view(['GET'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
+#just above 3 lines in every view of yours and it will ask username,pwd
+on evry api hit.
+def student_detail(request):
+    pass
+
+Use of BasicAuthentcation: to login in api via username and pwd.
+Using IsAuthenticated any registered user can access
+the api whether he is admin,staff or normal user.
+
+Now suppose you have many functions in views.py so writing everywhere the 
+basicauth and isautheticated is not optimised hence we can remove them 
+and write at one place in settings.py as:
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+18) Session authentication
+@authentication_classes([SessionAuthentication])
+and in urls.py write:
+path('auth/', include('rest_framework.urls', namespace='rest_framework'))
+
+now you will get login logout feature in rhs of browsable api.
+
+
+19) OPTIONS is an HTTP method that tells:
+
+"What operations are allowed on this URL?"
+
+It does NOT fetch data.
+It does NOT modify data.
+It only gives metadata about the endpoint.
+
+If you open:
+
+http://127.0.0.1:8000/c/1/
+
+
+And choose OPTIONS in DRF browsable API,
+
+You’ll get response like:
+
+{
+    "name": "Student Update",
+    "description": "",
+    "renders": ["application/json", "text/html"],
+    "parses": ["application/json", "application/x-www-form-urlencoded"],
+    "actions": {
+        "PUT": {...},
+        "PATCH": {...}
+    }
+}
+
+
+This means:
+
+PUT allowed
+
+PATCH allowed
+
+DELETE allowed
+
+What fields are required
+
+What content types are accepted
+
+20) Token authentication
+settings.py; in the installed apps:
+'rest_framework.authtoken',
+'api',
+
+run makemigrations now
+
+let us generate token by exposing an API endpoint that is, the user 
+will generate the token from their side:
+urls.py:
+from rest_framework.authtoken.views import obtain_auth_token
+path('d/', obtain_auth_token),
+
+21) JWT(JSON Web Token) authentication. 
+It is 3rd party authentication and some other authentication also exists
+like djoser etc.
+Earlier token in above was getting saved in db now it will not be saved in 
+db.
+
+pip install djangorestframework-simplejwt
+settings.py
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+
+urls.py
+
+from rest_framework_simplejwt.views import TokenObtainPairView, 
+TokenRefreshView
+urlpatterns = [
+    path('gettoken/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('refreshtoken/', TokenRefreshView.as_view(), name='token_refresh'),
+]
+
+22) Throttling: limit rate of api hits.
+
+23) Filtering: to see result as per the need.
+
+24) To disable browsable api:
+settings.py:
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',)
+}
+
+
+25)
