@@ -1,0 +1,140 @@
+1) In DBMS we cannot create relationship between tables but in RDBMS we can.
+
+2) To sort values of a specific column
+select * from Emp
+order by ename desc;
+
+3) Unique key
+do not allow duplicates; allow null;
+There can be multiple unique key per table but only one f.k per table;
+null != null in sql; null denotes missing value not duplicates;
+eg: email varchar(100) unique;
+email if provided has to be unique else null.
+
+4) Primary key
+do not allow nulls; only one pk; poly cols can be p.k but one is recommended.
+
+5) Aliases: temp name given for column and table.
+select s.name from Student
+select s.name from Student as s
+
+6) Not permanently but shown as a separate column
+select name,cost,cost+100 from Student
+
+7) select distinct name from student
+
+8) add multiple column to an existing table
+alter table student
+add column city varchar(10),
+add column mobile int;
+
+9) change column nmae and datatype
+alter table Items
+change column name ename varchar(20),
+change column name roll int;
+
+10) To modify datatype or size of data only and not name
+modify column roll int(10);
+
+11) create table Student
+(
+    roll int primary key,
+    name varchar(10) not null;
+)
+
+12) To delete a column
+alter table student
+drop column roll;
+some rdbms do not allow it.
+
+13) to delete all data from table but keep table
+truncate table my_table;
+
+14) to delete a table from the database
+drop table table_name
+
+15) to delete a database
+drop database db;
+
+16) Update statement is used to update existing records in a table
+update Emp
+set emp_name = 'arjun',salry=3500
+where empid=101;
+// where is important else all records will be replaced with given value.
+
+17) delete a record from table
+delete from Student
+where ename='aman' and eid=105
+
+18) to delete all records 
+delete from emp;
+
+19) diff between delete from emp vs truncate table emp;
+dml; ddl
+empty table but keep auto increment counting; reset everything like a fresh start
+
+20) copy old table from new table within same db
+create table new_table like old_table;
+insert into new_table select * from old_table;
+
+21) '' from diff db: syntax in pg 11 of sheet
+
+22) count(col_name): num of non-null values
+count(*): num of records in table.
+select count(*) from Emp;
+select count(distinct name) from emp
+
+23) mid(col_name,start,length) or substring('','','')
+
+24) gropy by: arrange rows in groups then apply agg funcs
+select name, MIN(salary) from emp
+GROUP BY name
+
+25) HAVING Clause(hmesha group by k saath)
+select name,min(fees) from studentgroup by namehaving min(fees)>2
+
+26) one to many: 1 dept many employees
+
+27) more table more query time
+
+28) p.k in one table is f.k in other;
+refrences is used for syntax pg:15
+f.k can be null; they can be non-unique;
+f.k name can be different than from p.k
+
+29) jab tak child table hai tab tak parent table ko delete nahi kar skte
+(reason: fk hai)
+
+30) delete record in parent table:
+cannot delete unless you delete that record from child table.
+hence: we use on delete cascade clause: it auto deletes records from
+child table;
+
+using on delete cascade the complete record from child table was gettting
+deleted, we want only to get null in f.k col and rest record to remain there;
+therefore we use : on delete set null;
+
+31) do table ko join karne se pehle dono mai se kisi ek mai p.k hona chaiyae.
+
+32) study join from sheet;
+join is by default inner join hence write join or inner join both works.
+
+33) where, group by, having, order by: all in one place
+SELECT department, COUNT(*) AS total_employees
+FROM employees
+WHERE salary > 50000
+GROUP BY department
+HAVING COUNT(*) > 5
+ORDER BY total_employees DESC;
+
+34) view: to reuse logic; virtual table based on select query.
+create view rich_fees 
+AS
+Select * from Student 
+where fees>1;
+
+now reuse: select * from rich fees
+
+to delete views: drop view rich_users.
+
+35)

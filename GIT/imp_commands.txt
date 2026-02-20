@@ -1,0 +1,125 @@
+1) to see history of commits
+git log
+
+2) creating a new branch do not create a copy of files and folders it just
+create a new pointer to a specific commit.
+
+3) merge,release 1, feature1, release 2 line diagram show interviewer
+
+4) git tag <aman>
+now my commit will have name=aman;
+i did some commis now;
+i find that these commits are not useful and i want to go back to aman and
+delete all these commis so i do:
+git checkout aman
+
+5) When you run git tag aman, Git creates a tag named "aman" on your current 
+commit. A tag is just like a label or bookmark. It marks that specific commit 
+so you can easily return to it later. It does not change your name, it does 
+not change your branch, and it does not affect future commits. It simply 
+remembers that particular commit with the name "aman".
+
+When you run git checkout aman, Git moves you to the commit that was marked 
+by the tag "aman". Your project files will now look exactly like they were at 
+that time. However, you are not on your normal branch anymore — you are in 
+something called a "detached HEAD" state. This means you are just viewing 
+that old commit. It does not delete any commits, and your branch history 
+remains unchanged.
+
+6) git tries to auto merge the merge conflict. fo e.g: same changes by
+both. else it will mark it and you have to do it manually.
+
+7) review changes: git status
+
+8) to unstage a file:
+git reset p.txt;
+git rm --cached p.txt
+
+9) to see what is changed but not staged.
+git diff; it shows extact line by line diff;
+- int x=10;
++ int x=20;
+git status: tells what changed;
+git diff: what exactly changed inside the files.
+
+10) roll back to prev commit: git reset --hard
+
+11) diff between git revert HEAD vs git reset --hard
+safe when used in collaboration; safe when used in local
+A->B->C ; A->B->C
+A->B->C->D; A->B
+D is new commit it undos changes made by C; deletes commit history
+Hence preserves commit hisory
+
+12) revert to a specific commit:
+git reflog #gives commit id
+git revert <commitId>
+
+13) see list of branch:
+git branch
+
+14) create a new branch:
+git branch feature1
+
+15) switch to new branch:
+git checkout feature1;
+
+16) create and switch to new branch feature2;
+git checkout -b feature2;
+
+17) delete branch named feature2;
+git branch -D feature2;
+
+18) merge feature1 branch to master branch:
+come at master branch;
+git merge;
+#now delete the feature1 branch:
+git branch -d feature1;
+
+19) git stash: temp save without commit;
+to retrieve the saved thing: git stash pop;
+
+20) push code from local to github
+create repo in github;
+myproject open in bash;
+git init;
+do work();
+git add .
+git commit -m "msg" ;
+git remote add origin <copy HTTP url of github repo you created>
+(instead of origin name can be anything)
+(connection ban gaya remote repo se)
+git push -u origin master #first time baad mai git push se ho jayega.
+
+21) to know your repo name(here: origin)
+git remote -v
+
+22) push feature1 branch to github
+git checkout feature1;
+git push origin feature1;
+
+23) from github to local how to bring changes:
+git pull;
+
+24) ek online repo ka code github mai kaise laayenge:
+folder bnao myproject
+http github repo url copy;
+git clone <url>
+
+25) .gitignore
+cache/
+.env
+*.txt
+
+26) your teammate did x=20 ; commit and pushed;
+you did x=10 and when you try git pull it shows merge conflict;
+you will have to solve it manually;
+prevention of above():
+* communicate who's working on what;
+* pull before starting work to stay up to date;
+* use small frequent commits - easier merge;
+
+27) rename main to master: can do it if you are owner of the project;
+go to settings and rename from there.
+
+28)
