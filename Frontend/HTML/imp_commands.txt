@@ -1,0 +1,126 @@
+1) HTML: for developing static web pages.
+A static web page is a fixed web page that does not change automatically
+unless we change the code. We can only fill form but what to do after that 
+we cannot do.
+
+2) A HTML file is a collection of tags/elements
+<html> <!-- root tag -->
+    <head>
+        <title> Title for browser window </title>
+    </head>
+    <body>
+    Content
+    </body>
+</html>
+
+3) new line: <br>
+
+4) horizontal line: <hr> 
+
+5) <body bgcolor="yellow" text color="red>
+
+6) <h1> to <h6> : heading tags
+
+7) <p> : to create paragraph: by default align=left
+<p align="right"> text is here </p>
+<p align="center"> text is here </p>
+
+8) formatting tags:
+<b> : bold
+<i> : italics
+<u> : underline
+<sup> : superscipt
+<sub> : subscript
+<strike> : to strike the text
+<font> : to set the font style, size and color of the text
+<pre> : to display as we have written in text editor with same indent:
+<pre>
+    public class Main{
+        public static void main(String args[])
+        {
+
+        }
+    }
+</pre>
+
+9) ordered list:
+1.  i.  I.  A.  a.
+2.  ii. II. B.  b.
+3.  iii. III. C. c.
+
+unordered list:
+o • □
+o • □
+o • □
+
+<ol type="1|I|i|A|a" # default is 1
+    <li> ...
+    <li> ...
+</ol>
+
+<ul type="disc|square|circle" 
+    <li> ...
+    <li> ...
+</ul>
+
+10) <img> : to insert image as per our own width and text
+<img src="t.jpg" width="200" height="200" alt="not found" />
+
+11) hyperlink is text/image which when clicked opens another HTML page.
+<a> : anchor tag is used to create hyperlinks
+<a href="home.html"> Home </a>
+
+12) table:
+<table>
+    <tr>
+        <th> col1 </th>
+        <th> col2 </th>
+    <tr>
+    <tr>
+        <th> val1 </th>
+        <th> val2 </th>
+    </tr>
+</table>
+
+13) html form: to accept user input
+Name:
+Password: 
+above are c/a labels
+o -> radio
+□ -> checkbox
+
+code of form:
+<form>
+    Name <input type="text"/><br>
+    Password <input type="password"/><br>
+    Address <textarea rows="4" cols="20"></textarea><br>
+    Skills <input type="checkbox"/>HTML
+           <input type="checkbox"/>CSS
+           <input type="checkbox"/>JavaScript
+    <br>
+    Gender <input type="radio" name="r1"/>Male
+           <input type="radio" name="r1"/>Female
+    <br>
+    Location <select>
+        <option>chennai</option>
+        <option>Bengaluru</option>
+        <option>Hyderabad</option>
+    </select>
+    <br>
+    Preferred Locations
+    <select multiple>
+        <option>chennai</option>
+        <option>Bengaluru</option>
+        <option>Hyderabad</option>
+    </select>
+    <br>
+    <input type="submit" value="Submit">
+</form>
+
+type="submit" means browser will send form data to server;
+value="Submit" means what text appears on the screen.
+Its name can be anything like Register etc.
+
+14)
+
+15)
