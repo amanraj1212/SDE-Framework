@@ -121,6 +121,9 @@ type="submit" means browser will send form data to server;
 value="Submit" means what text appears on the screen.
 Its name can be anything like Register etc.
 
-14)
+14) <body>
+	<div> text </div>
+	<div> text </div>
+        </body>
 
 15)

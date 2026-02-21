@@ -1,0 +1,72 @@
+1) CSS describes how html elements are displayed.
+
+2) <head>
+        <style> css code here </style> 
+    </head>
+
+3) h3{
+    text-align:center;
+    color:green;
+}
+p{
+    text-align:right;
+    color:green;
+}
+above is example of element selector
+
+4) Css selectors
+element selector;id selector;class selector;group selector;universal selector
+
+5) <h3 id="aman"> I am text </h3>; now use #aman{}; only in written element
+the id prop will be applied.
+in class we use .class_name{};(whole line of let say h3 will have class prop
+applied in)
+
+group selector:
+h3,h4,p{
+    text-align:center;
+    color:red;
+}
+
+universal selector: meaning that for all elements the styles are same
+*{
+    text-align:center;
+    color:red;
+}
+
+6) ways of inserting css:
+internal style sheets; inline style sheets; external style sheets;
+internal style sheets: <style>..</style>
+inline style sheets: 
+<h3 style="text-align:right;color:red;"> I am going </h3>
+external style sheets:
+<head>
+    <link rel="stylesheet" type="text/css" href="mystyle.css" />
+</head>
+
+7) margin: 100px; // will apply to all: top bottom left and right
+ margin-top: 30px; // only apply margin to top
+
+8) gap between border and text is padding;
+padding: 10px; apply to all 4 directions;
+padding-left:20px;
+
+9)
+
+10)
+
+11)
+
+12)
+
+13)
+
+14)
+
+15)
+
+16)
+
+17)
+
+18)

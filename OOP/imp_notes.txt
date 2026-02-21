@@ -1,0 +1,176 @@
+1) compile time polymorphism/early binding/static binding:
+change in num of args or type of args.
+int f(int x, int y);  float f(int x, int y): error 
+
+2) Multiple inheritance: Son inherit from Father,Mother
+Hierarchial inheritance: Son and Daughter inherit from father
+Multilevel inheritance: Grandparent, Parent and Child
+
+3) In C++, class itself can't be public , private or protected like in Java.
+
+4) In C++, public members of a class can be accessed from anywhere, any 
+folder as long as .h file is declared.
+
+5) In Java package is not just a folder unless we define the file within the 
+folder with package statement.
+src/
+    Navbar/
+            A.java: contains: package Navbar;
+    Footer/
+            B.java: contains package Footer
+We say A.java is n package Navbar and B.java is in package Footer.
+
+6) In Java only one top level public class and in this case file name 
+must be same(case sensitive)
+
+7) class A{
+
+}
+In Java by default it has default acess level: package-private;
+accessed within the same package.
+
+8) Top level class in java cannot be private or protected.
+Only nested class can be private or protected.
+
+9) if a class is declared public, it can be accessed:
+from any other class
+from any other package
+anywhere in the project
+provided that it is imported properly.
+
+10) Note: even if class is public its members(variables/methods) must also 
+be accessible.
+public class A{
+    void disp() // package-private method
+}
+if another package tries to call disp, it won't work.
+
+11) In java, a protected member(variable or method)
+is accessible inside the same package.
+is accessible in other packages only through inheritance.
+
+12) In C++, only the current class and friend functions can access the 
+private and protected members.
+
+13) In C++:
+class E{
+    public: int a;
+    protected: int b;
+    private: int c;
+}
+# public inheritance:
+class F:public E{};
+Member in E     Becomes in F
+public a        public
+protected b     protected
+private c       not accessible
+
+# protected inheritance:
+class F:protected E{};
+Member in E     Becomes in F
+public a        protected
+protected b     protected
+private c       not accessible
+
+# public inheritance:
+class F:private E{};
+Member in E     Becomes in F
+public a        private
+protected b     private
+private c       not accessible
+
+Trick: public inheritance-> keeps original visibility
+       protected inheritance -> everything becomes protected
+       private inheritance -> everything becomes private 
+
+14) Constructor chaining in java and c++; diff in python;
+
+15) super k.w in java is a reference variable that is used to refer immediate
+parent class obj.
+super -> used to refer immediate parent class instance var or instance 
+method;
+super() -> used to invoke immediate parent class constructor.
+
+16) Multilevel inheritance
+key: curr class method will be called until unless specified with 
+::(in c++) or super(in java); code in pg 25 sheets.
+
+17) Multiple inheritance: in sheets after pg 25 sheets; explicit call 
+
+18) firiend func: declare inside class and define anywhere just like a normal
+function.
+
+class class_name{
+    friend datatype func_name(arguments);
+};
+
+19) Inheritance: "is a" relation ship;
+class Animal{}
+class Dog extends Animal{}
+Dog is a Animal -> Animal d = new Dog();
+Animal is not a dog -> Dog d = new Animal (error)
+
+20) Java is polymorphism by default
+    C++ is polymorphism by choice.
+    pg: 28,29 sheets vvi(runtime polymorphism code)
+diff output in c++ and java.
+
+21) to call overriding function of a child class and not parent class 
+we define virtual func in parent class in c++.
+
+22) we cannot have a virtual constructor.
+
+23) constructor can be private. used in creation of singleton class; 
+only one instance of a class.
+
+24) virtual functions cannot be a static members.
+virtual void show()=0; // pure virtual function.
+
+25) a class containing pure virtual function cannot be instantiated 
+and sunch classess are c/s abstarct base class.
+
+26) a class that is declared with abstract k.w is c/a abstract class 
+in java.
+
+27) abstract void printstatus();
+
+28) int java const k.w is not there so we use:
+static final float pi = 3.14;
+
+29) interface in java: it has static constant and abstract method only.
+
+30) class <- class (extends)
+    interface <- class (implements)
+    interface <- interface (implements)
+
+31) Exception: an object thrown at runtime.
+
+32) design patterns and extra solid and useful stuffs: pg 32 onwards.
+
+33) no return type in constructor, not even void.
+
+34) composition/aggregation : define "has a" relationship
+class Engine{}
+class Car{
+    Engine e;
+}
+Car has an engine.
+
+35) static member func can only access other static member or static func of 
+class, not private or public or protected members.
+
+36) constructors cannot be friend functions.
+
+37) diamond problem in c++: point 36 cp copy from prev page;
+imp: only one copy of base class will be inherited in child class;
+it is done via virtual k.w;
+
+38) class C:public A, public B;
+order of execution: A,B,C;
+
+class C:public A, virtual public B
+order of execution: B,A,C
+
+39)
+
+40)

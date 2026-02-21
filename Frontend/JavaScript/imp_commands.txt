@@ -1,0 +1,113 @@
+1) JS is used to develop client side(browser) dynamic web pages.
+
+2) how to include js code:
+<head>
+    <script> js code here </script>
+</head>
+OR
+<body>
+    <script> js code here </script>
+</body>
+OR external js:
+<haed>
+    <script src="myscript.js"> </script>
+</head>
+
+3) let name = prompt("Enter your name");
+   document.write("Name = "+name); 
+
+4) let num = parseInt(prompt("Enter number"));
+we use parse int to type cast into int else it will take num as string.
+
+5) onclick is event;
+<html>
+<head>
+    <script>
+        function myfun()
+        {
+            alert("I am a Function");
+        }
+        //myfun();
+    </script>
+</head>
+<body>
+    <input type="button" value="Click Me" onclick="myfun()"/>
+</body>
+</html>
+
+function f()
+{
+    return 20; // we could use return also
+}
+
+6) WAP to accept input and calculate total
+<html>
+<head>
+    <script>
+        function calculateTotal()
+        {
+            let mark1 = parseInt(document.f1.mark1.value);
+            let mark2 = parseInt(document.f1.mark2.value);
+            let mark3 = parseInt(document.f1.mark3.value);
+            let total = mark1 + mark2 + mark3;
+            document.f1.total.value = total;
+        }
+    </script>
+</head>
+<body>
+    <form name="f1">
+        Enter Mark1 : <input type="text" name="mark1"/><br>
+        Enter Mark2 : <input type="text" name="mark2"/><br>
+        Enter Mark3 : <input type="text" name="mark3"/><br>
+        Total Marks : <input type="text" name="total" readonly/><br>
+        <input type="button" value="Calculate Total" onclick="calculateTotal()"/>
+    </form>
+</body>
+</html>
+
+7) example of document object model:
+<html>
+<head>
+    <script>
+        function change()
+        {
+            let p1 = document.getElementById("p1");
+            p1.innerHTML = "<h3>Welcome to JavaScript</h3>";
+        }
+    </script>
+</head>
+<body>
+    <p id="p1">Welcome to HTML</p>
+    <button onclick="change()">Change</button>
+</body>
+</html>
+
+8) 5===5 // equal value and same type.
+
+9) undefined vs null;
+undefined means value has not been set or missing; null means value has 
+been set to empty.
+
+10) NaN never compares to itself;
+
+11) DOM : Object oriented reprsentation of a web page
+
+12)
+
+13)
+
+14)
+
+15)
+
+16)
+
+17)
+
+18)
+
+19)
+
+20)
+
+21)
