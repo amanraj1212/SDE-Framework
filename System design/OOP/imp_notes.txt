@@ -171,6 +171,51 @@ order of execution: A,B,C;
 class C:public A, virtual public B
 order of execution: B,A,C
 
-39)
+39) static call in java and c++ that are not overridden and virtual are resolved by reference type
+class Parent {
+    static void show() {
+        System.out.println("Parent show");
+    }
+}
+
+class Child extends Parent {
+    static void show() {
+        System.out.println("Child show");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Parent obj = new Child();
+        obj.show();
+    }
+}
+
+op: Parent show
+
+in c++:
+#include <iostream>
+using namespace std;
+
+class Parent {
+public:
+    void show() {
+        cout << "Parent show";
+    }
+};
+
+class Child : public Parent {
+public:
+    void show() {
+        cout << "Child show";
+    }
+};
+
+int main() {
+    Parent* obj = new Child();
+    obj->show();
+}
+
+op: Parent show
 
 40)

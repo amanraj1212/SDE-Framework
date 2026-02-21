@@ -1,0 +1,8 @@
+1) Why System design is considered hard?
+as it is non-deterministic in nature. That is what makes it even more exciting.
+
+2) 
+
+3)
+
+4)
