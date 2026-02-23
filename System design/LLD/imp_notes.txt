@@ -1,8 +1,319 @@
 1) Why System design is considered hard?
 as it is non-deterministic in nature. That is what makes it even more exciting.
 
-2) 
+2) SOLID Principle
 
-3)
+S: Each class has a single responsibility
 
-4)
+O: Open/closed principle:
+A class should be open for extension but closed for modification.
+open for extension(via inheritance); closed for modification within same code.
+
+L: violation of liskov substituyion principle:
+whenever a base class tries to force a derived class to implement a func which
+the derived class do not want then it is violation of LSP;
+
+I: ISP(Inteface segregation principle):
+it is better to have many small, specific interfaces than a few monolithic
+ones that try to do everything.
+
+D: Dependency inversion principle:
+high level module should not depend on low level module; both should depend 
+on abstraction.
+Also:
+Abstractions should not depend on details.
+Details should depend on abstractions.
+
+3) how to detect violation of SOLID
+
+S:
+Classes having diff responsibilities. too long code in a function.
+#include <iostream>
+using namespace std;
+
+class User {
+private:
+    string name;
+    string email;
+
+public:
+    User(string n, string e) : name(n), email(e) {}
+
+    void saveToDatabase() {
+        cout << "Saving user to database...\n";
+    }
+
+    void sendEmail() {
+        cout << "Sending email to " << email << endl;
+    }
+
+    void printUser() {
+        cout << "Name: " << name << ", Email: " << email << endl;
+    }
+};
+
+int main() {
+    User u("Aman", "aman@gmail.com");
+    u.printUser();
+    u.saveToDatabase();
+    u.sendEmail();
+}
+
+This User class has 3 responsibilities:
+
+Holds user data
+
+Handles database saving
+
+Handles email sending
+
+Now imagine:
+
+Database logic changes → you modify User
+
+Email logic changes → you modify User
+
+Printing format changes → you modify User
+
+solution:
+#include <iostream>
+using namespace std;
+
+class User {
+private:
+    string name;
+    string email;
+
+public:
+    User(string n, string e) : name(n), email(e) {}
+
+    string getName() { return name; }
+    string getEmail() { return email; }
+};
+
+class UserRepository {
+public:
+    void save(User& user) {
+        cout << "Saving user to database...\n";
+    }
+};
+
+class EmailService {
+public:
+    void sendEmail(User& user) {
+        cout << "Sending email to " << user.getEmail() << endl;
+    }
+};
+
+class UserPrinter {
+public:
+    void print(User& user) {
+        cout << "Name: " << user.getName()
+             << ", Email: " << user.getEmail() << endl;
+    }
+};
+
+int main() {
+    User u("Aman", "aman@gmail.com");
+
+    UserPrinter printer;
+    UserRepository repo;
+    EmailService emailService;
+
+    printer.print(u);
+    repo.save(u);
+    emailService.sendEmail(u);
+}
+
+O:
+Example of OCP Violation (using if-else if)
+#include <iostream>
+using namespace std;
+
+class AreaCalculator {
+public:
+    double calculateArea(string shape, double a, double b = 0) {
+        if (shape == "circle") {
+            return 3.14 * a * a;
+        }
+        else if (shape == "rectangle") {
+            return a * b;
+        }
+        else if (shape == "triangle") {
+            return 0.5 * a * b;
+        }
+        return 0;
+    }
+};
+
+int main() {
+    AreaCalculator calc;
+    cout << calc.calculateArea("circle", 5) << endl;
+}
+
+If tomorrow you want to add:
+
+Square
+
+Pentagon
+
+Ellipse
+
+You must modify the existing calculateArea() function and add another else if.
+
+That means:
+
+Existing tested code is modified
+
+Risk of breaking old functionality
+
+Not scalable
+
+OCP Solution (Using Polymorphism)
+
+Instead of if-else, use inheritance + virtual functions
+#include <iostream>
+using namespace std;
+
+class Shape {
+public:
+    virtual double area() = 0;
+};
+
+class Circle : public Shape {
+    double radius;
+public:
+    Circle(double r) : radius(r) {}
+    double area() override {
+        return 3.14 * radius * radius;
+    }
+};
+
+class Rectangle : public Shape {
+    double length, width;
+public:
+    Rectangle(double l, double w) : length(l), width(w) {}
+    double area() override {
+        return length * width;
+    }
+};
+
+class Triangle : public Shape {
+    double base, height;
+public:
+    Triangle(double b, double h) : base(b), height(h) {}
+    double area() override {
+        return 0.5 * base * height;
+    }
+};
+
+int main() {
+    Shape* s1 = new Circle(5);
+    Shape* s2 = new Rectangle(4, 6);
+
+    cout << s1->area() << endl;
+    cout << s2->area() << endl;
+}
+
+L:
+Look for forced inheritance and overrides.
+
+I:
+Bulky interface; lots of functions to implement.
+
+D:
+#include <iostream>
+using namespace std;
+
+class EmailService {
+public:
+    void sendEmail(string message) {
+        cout << "Sending Email: " << message << endl;
+    }
+};
+
+class Notification {
+private:
+    EmailService emailService;  // Direct dependency
+
+public:
+    void notify(string message) {
+        emailService.sendEmail(message);
+    }
+};
+
+int main() {
+    Notification n;
+    n.notify("Hello Aman");
+}
+
+Why This Violates DIP?
+
+Notification (high-level class) directly depends on EmailService (low-level class).
+
+If tomorrow you want:
+
+SMS service
+
+WhatsApp service
+
+Push notification
+
+You must modify Notification class.
+
+Correct Design (Follows DIP)
+
+We introduce an abstraction (interface).
+
+#include <iostream>
+using namespace std;
+
+// Abstraction
+class MessageService {
+public:
+    virtual void sendMessage(string message) = 0;
+};
+
+// Low-level module
+class EmailService : public MessageService {
+public:
+    void sendMessage(string message) override {
+        cout << "Sending Email: " << message << endl;
+    }
+};
+
+// Another low-level module
+class SMSService : public MessageService {
+public:
+    void sendMessage(string message) override {
+        cout << "Sending SMS: " << message << endl;
+    }
+};
+
+// High-level module
+class Notification {
+private:
+    MessageService* service;
+
+public:
+    Notification(MessageService* s) : service(s) {}
+
+    void notify(string message) {
+        service->sendMessage(message);
+    }
+};
+
+int main() {
+    EmailService email;
+    SMSService sms;
+
+    Notification n1(&email);
+    n1.notify("Hello via Email");
+
+    Notification n2(&sms);
+    n2.notify("Hello via SMS");
+}
+
+4) 
+
+5)
