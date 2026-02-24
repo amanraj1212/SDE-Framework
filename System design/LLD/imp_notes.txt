@@ -314,6 +314,166 @@ int main() {
     n2.notify("Hello via SMS");
 }
 
-4) 
+4) aggregation vs composition:
+aggregation:
+Weak Has-A Relationship;
+One object has another object. But both can exist independently.
+Child can exist without parent
+Represented by hollow diamond (◇) in UML.
 
-5)
+composition:
+Strong Has-A Relationship
+One object owns another object.
+If the parent is destroyed, child is also destroyed.
+Represented by filled diamond (◆) in UML
+Rooms cannot exist without house.
+
+5) Unified Modeling Language(UML) is a standard visual language used to design 
+and represent software systems using diagrams.
+
+6) Types of Links:
+Association: basic link between 2 classes(customer placing an order)
+Aggregation: a Team has Employees (Emps can exists on own irrespective of team)
+Composition: A Book is composed of Chapters
+Inheritance: shows one class shares feature with another. eg: manager is a Emp.
+
+7) alt(if else); opt(if)
+
+8) design pattern reference: refactoring guru website
+
+9) Design patterns
+Design patterns are specific ways to arrange those UML box and people have 
+noticed that it is a good way.
+
++ creational patterns: how objects are created(Factory, abstract,singleton,
+builder)
++ structural patterns: how classes/objects are composed(adapter,decorator)
++ behavioral pattern: how objects interact/behave(strategy,observer,command,
+template)
+
+How to study design patterns?
++ What is it?
++ 3 scenario examples for the pattern
++ UML diagram for the same
++ Implementation details
++ common follow-ups question
+
+10) Singleton Pattern is a design pattern that ensures:
+
+Only one object of a class is created
+And everyone uses that same object
+
+We use Singleton when:
+
+We need only one shared resource
+
+Example:
+
+Database connection
+
+Logger
+
+Configuration manager
+
+Printer spooler
+
+Because if multiple objects are created, it may cause:
+
+Data inconsistency
+
+Resource waste
+
+Unexpected behavior
+
+How Singleton Works (Concept)
+
+Make constructor private → So no one can create object from outside.
+
+Create a static instance inside the class.
+
+Provide a public method to access that instance.
+
+#include <iostream>
+using namespace std;
+
+class Singleton {
+private:
+    static Singleton* instance;
+
+    Singleton() {   // Private constructor
+        cout << "Object Created\n";
+    }
+
+public:
+    static Singleton* getInstance() {
+        if (instance == nullptr) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+};
+// why this line is wriiten: explanation is below
+Singleton* Singleton::instance = nullptr;
+
+int main() {
+    Singleton* obj1 = Singleton::getInstance();
+    Singleton* obj2 = Singleton::getInstance();
+}
+
+Output:
+Object Created
+
+Even though we called getInstance() twice, object was created only once
+why this line is written: Singleton* Singleton::instance = nullptr;
+to define and initialize the static data member of the class.
+class Singleton {
+private:
+    static Singleton* instance;
+};
+
+This only declares the static variable.
+
+It does NOT create memory for it.
+Why do we define it outside?
+
+In C++, static class variables must be defined outside the class.
+
+11) Concurrency
+
++ Thread safety means ensuring that shared data remains consistent and correct 
+when accessed by multiple threads simultaneously.
+
++ concurrency: interleaving task;
+
++ parallelism: simulatanous task
+
++ concurrency brings responsiveness and throughput.
+
+12) common questions in lld interviews:
++ parking lot
++ book my show
++ payment channel
++ LRU Cache
++ LFU Cache
++ snakes and ladder
++ tic-tac-toe
+
+Here is a list of common questions to solve.
+
+Design Meeting Scheduler
+Design Zerodha
+Design an Elevator System
+Design ChatGPT
+Design Order Book
+Design Splitwise
+Design Food delivery
+Design Ride-Sharing (Uber-like)
+Design Instagram.
+If you need more resource, a good place to start exploring :
+https://github.com/prasadgujar/low-level-design-primer/blob/master/solutions.md
+
+13) HLD: Alex Hue's System Design Primer book
+
+14)
+
+15)

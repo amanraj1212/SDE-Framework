@@ -218,4 +218,20 @@ int main() {
 
 op: Parent show
 
-40)
+40) In C++, static data members must be defined outside the class unless they are inline (C++17) or certain const integral types.
+
+If you write:
+
+class A {
+public:
+    static int x;   // Declaration only
+};
+
+This is only a declaration, not definition.
+
+You MUST define it outside:
+
+int A::x = 10;   // Definition (memory allocated here)
+
+
+41)
