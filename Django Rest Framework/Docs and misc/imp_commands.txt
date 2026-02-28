@@ -1,5 +1,7 @@
 1) make sure to include: rest_framework in the installed apps of settings.py
 
+REST apis are used to make distributed application which are used to interact one application with another application.
+
 2) Serialization:
 converting complex data into JSON format.
 model instance to JSON -> Serialization

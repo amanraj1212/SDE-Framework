@@ -2,6 +2,9 @@
 change in num of args or type of args.
 int f(int x, int y);  float f(int x, int y): error 
 
+compile time polymorphism (method overloading)
+runtime polymorphism (method overriding)
+
 2) Multiple inheritance: Son inherit from Father,Mother
 Hierarchial inheritance: Son and Daughter inherit from father
 Multilevel inheritance: Grandparent, Parent and Child
