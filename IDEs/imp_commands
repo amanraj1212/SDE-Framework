@@ -1,0 +1,26 @@
+1) to create new file
+ni "filename.txt" -i File # in Windows
+touch .filename.txt # in Linux
+
+2) to comment selected lines after selecting from mouse
+ctrl + ?
+
+3) ctrl + k : for quick chat with selected lines in cursor
+
+4) in cursor: ctrl + shift  + P : to open command pallete in cursor
+search: index
+press ESC to close command pallete
+
+5)
+
+6)
+
+7)
+
+8)
+
+9)
+
+10)
+
+11)

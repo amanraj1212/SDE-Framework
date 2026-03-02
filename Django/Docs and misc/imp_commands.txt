@@ -1,3 +1,6 @@
+django-admin startproject myproject .
+to create project inside same directory
+
 1) To run server in specific port:
 python manage.py runserver 4000
 
@@ -35,7 +38,7 @@ urls.py:
     path('a/', views.my_func, {'status':'OK'} ,name='my_func'),
 app1/views.py:
     def my_func(request, **kwargs):
-    status = kwargs.get('status', 'if_ab_then_this_default_val_will_be_shown)
+    status = kwargs.get('status', 'if_ab_then_this_default_val_will_be_shown')
     return HttpResponse(f'Hello World! The status is {status}')
 key: dict: mp.get(key_val, default_val_to_return_if_key_is_absent)
 
@@ -386,7 +389,7 @@ many to many ; on delete cascade etc;
 wsgi: web server gateway interface; used to make synchronous application; 
 if one req takes 10s and other 5s then total time taken to process both
 request is 15s but in asgi: asynchronous server gateway interface; if
-one req take 10s and other 5s the both request will end in 15s;
+one req take 10s and other 5s the both request will end in 10s;
 asgi is used when we want to make real time chat applications;
 it supports both http and sockets;wsgi only supports http protocol;
 wsgi used to make traditional web application;in djnago channel and django celery
