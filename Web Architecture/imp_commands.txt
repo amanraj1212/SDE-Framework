@@ -1,0 +1,23 @@
+1) Suppose you have made an api which gives token in response. You have used JWT for this. Now you made this to secure your apis like:
+[POST]api/production: you do not want anyone but logged in people to access it.
+Open post man. open this [POST]api/production and in Authorization section select Bearer in Auth dropdown and paste the token and send request.
+
+Method 2: In the Header section of Postman:
+key: Authorization
+value: Bearer <token>
+
+2) CORS Security in Django
+CORS / API exposure
+Right now, unless you added a CORS library, Django returns no CORS headers, which means:
+Browsers will block cross‑origin AJAX calls by default.
+Your APIs are effectively callable only from:
+Same origin (your own dashboard), or
+Non‑browser clients (Postman, curl).
+For a real deployment, you’d typically:
+Install django-cors-headers.
+In settings.py configure tightly, e.g.:
+CORS_ALLOWED_ORIGINS = [    "https://factory-dashboard.company.com",]CORS_ALLOW_CREDENTIALS = False
+Do not set CORS_ALLOW_ALL_ORIGINS = True in production.
+This ensures only your official dashboard domain can call the /myapp/... APIs from a browser.
+
+3)
